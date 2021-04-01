@@ -14,7 +14,7 @@ let appSecret = 'dsjkfnnkmdsbncjhbskjyfbckjsbjfdbgsjdbcjhsdgcjksdc'
 const connection = async () => new Promise(
     (resolve, reject) => {
         const connection = mysql.createConnection({
-            host: '192.168.100.12',
+            host: 'localhost',
             user: 'ahmed',
             password: '12class34',
             database: 'etdb'
