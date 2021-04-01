@@ -70,13 +70,13 @@
 </head>
 
 <body>
-    <button onclick="window.location.href = './usersList.html'">&larr; back</button>
+    <button onclick="window.location.href = './usersList.html'" name="back">&larr; back</button>
     <div id="messagesWindow">
 
     </div>
     <div id="sendDiv">
-        <input id="sendInput" type="text" >
-        <button onclick="sendMessage()">Send</button>
+        <input id="sendInput" name="message" type="text" >
+        <button onclick="sendMessage()" name="submitmessage">Send</button>
     </div>
 
     <script src="js/chatWindow.js"></script>

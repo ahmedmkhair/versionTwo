@@ -111,6 +111,9 @@ app.post('/api/login', async (req, res) => {
     let item = await testConnection(co, `select * from users where name = '${req.body.username}' and password = '${req.body.password}'`)
     // let item = userList.find(i => i.name === req.body.username && i.password === req.body.password)
 
+    console.log(item)
+
+
     if (item.length !== 0) {
         item = item[0]
         let userData = {
