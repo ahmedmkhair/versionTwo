@@ -31,8 +31,11 @@ test('Test failed login', async () => {
         username: 'ali',
         password: '1234'
     }
-    )
-    expect(res.status).toBe(403)
+    ).catch(function (e){
+        expect(e.response.status).toBe(401)
+    })
+    
+   // expect(res.status).toBe(403)
  done();
     // expect(res.data.msg).toBe("ok")
 })
