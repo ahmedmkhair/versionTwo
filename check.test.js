@@ -8,7 +8,7 @@ const { test, expect } = require("@jest/globals");
 let axios = require('axios')
 //let mysql = require('mysql')
 axios.defaults.adapter = require('axios/lib/adapters/http');
-
+jest.setTimeout(30000);
 
 
 // testing case title
