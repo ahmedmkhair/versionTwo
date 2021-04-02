@@ -21,7 +21,6 @@ test('Test login successfuly', async () => {
     }
     )
     expect(res.status).toBe(200)
- done();
     // expect(res.data.msg).toBe("ok")
 })
 test('Test failed login', async () => {
@@ -36,7 +35,7 @@ test('Test failed login', async () => {
     })
     
    // expect(res.status).toBe(403)
- done();
+
     // expect(res.data.msg).toBe("ok")
 })
 
@@ -76,7 +75,7 @@ test('get chat list', async () => {
         })
         console.log(getdata.status)
     expect(res.status).toBe(200)
- done();
+
 
 })
 
@@ -101,7 +100,7 @@ test('get chat', async () => {
     })
     console.log(getdata.status)
     expect(res.status).toBe(200)
- done();
+
 
 })
 
@@ -126,7 +125,7 @@ test('send message', async () => {
     })
     console.log(getdata.status)
     expect(res.status).toBe(200)
- done();
+
 
 })
 
