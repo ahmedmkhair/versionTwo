@@ -1,96 +1,69 @@
 const puppeteer = require('puppeteer')
 
 async function test() {
-    let browser = await puppeteer.launch({ headless: false })
-    let page = await browser.newPage()
+    try {
 
-    await page.goto("http://localhost:3000")
-    await page.setViewport({
-        width: 0,
-        height: 0
-    })
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        let page = await browser.newPage()
 
-
-
-    let user1 = await page.$('input[name=username]')
-    await user1.type("saif")
-
-    await page.waitForTimeout(2000)
-
-
-    let password = await page.$('input[name=password]')
-    await password.type("123")
-
-    await page.waitForTimeout(2000)
-
-
-    let login = await page.$('[name=submit]')
-    await login.click()
-
-    await page.waitForTimeout(2000)
-
-
-    await page.waitForSelector('.data')
-    await page.click('.data')
-    await page.waitForTimeout(2000)
+        await page.goto("http://localhost")
+        await page.setViewport({
+            width: 0,
+            height: 0
+        })
 
 
 
-    let inputmessage = await page.$('input[name=message]')
-    await inputmessage.type("Hello from puppeteer")
+        let user1 = await page.$('input[name=username]')
+        await user1.type("omar")
 
-    await page.waitForTimeout(2000)
-
-
-
-    let message = await page.$('[name=submitmessage]')
-    await message.click()
-
-    await page.waitForTimeout(2000)
+        await page.waitForTimeout(2000)
 
 
+        let password = await page.$('input[name=password]')
+        await password.type("123")
 
-    let back = await page.$('[name=back]')
-    await back.click()
-
-    await page.waitForTimeout(2000)
-
+        await page.waitForTimeout(2000)
 
 
-    let logout = await page.$('[name=logout]')
-    await logout.click()
+        let login = await page.$('[name=submit]')
+        await login.click()
 
-    await page.waitForTimeout(2000)
+        await page.waitForTimeout(10000)
+
+        await page.waitForSelector('.data')
+        //await page.waitForSelector('body')
+        await page.click('.data')
+        await page.waitForTimeout(10000)
 
 
 
 
+        let inputmessage = await page.$('input[name=message]')
+        await inputmessage.type("Hello from puppeteer")
+
+        await page.waitForTimeout(2000)
+
+
+        let message = await page.$('[name=submitmessage]')
+        await message.click()
+
+        await page.waitForTimeout(2000)
+
+
+
+        let back = await page.$('[name=back]')
+        await back.click()
+
+        await page.waitForTimeout(2000)
 
 
 
 
+        let logout = await page.$('[name=logout]')
+        await logout.click()
 
-
-    let admin = await page.$('input[name=username]')
-    await admin.type("omar")
-
-    await page.waitForTimeout(2000)
-
-
-    let password2 = await page.$('input[name=password]')
-    await password2.type("123")
-
-    await page.waitForTimeout(2000)
-
-    let submit1 = await page.$('[name=submit]')
-    await submit1.click()
-
-    await page.waitForTimeout(2000)
-
-
-    await page.waitForSelector('.allchat')
-    await page.click('.allchat')
-    await page.waitForTimeout(2000)
+        await page.waitForTimeout(2000)
 
 
 
@@ -98,26 +71,54 @@ async function test() {
 
 
 
-    let back2 = await page.$('[name=back]')
-    await back2.click()
-
-    await page.waitForTimeout(2000)
 
 
 
-    let logout2 = await page.$('[name=logout]')
-    await logout2.click()
+        let admin = await page.$('input[name=username]')
+        await admin.type("omar")
 
-    await page.waitForNavigation()
+        await page.waitForTimeout(2000)
 
-    let result = await page.url()
-    await page.screenshot({ path: 'puppeteer.png' })
-    browser.close()
 
+        let password2 = await page.$('input[name=password]')
+        await password2.type("123")
+
+        await page.waitForTimeout(2000)
+
+        let submit1 = await page.$('[name=submit]')
+        await submit1.click()
+
+        await page.waitForTimeout(2000)
+
+
+        await page.waitForSelector('.allchat')
+        await page.click('.allchat')
+        await page.waitForTimeout(2000)
+
+
+
+
+
+
+
+        let back2 = await page.$('[name=back]')
+        await back2.click()
+
+        await page.waitForTimeout(2000)
+
+
+
+        let logout2 = await page.$('[name=logout]')
+        await logout2.click()
+
+        await page.waitForNavigation()
+
+        browser.close()
+    }
+    catch (error) {
+        console.log(error)
+    }
 }
 
 
 test()
-
-
-
