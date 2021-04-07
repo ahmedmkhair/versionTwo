@@ -5,211 +5,151 @@
 */
 
 const { test, expect } = require("@jest/globals");
-let axios = require('axios')
-//let mysql = require('mysql')
+let axios = require('axios');
 axios.defaults.adapter = require('axios/lib/adapters/http');
-jest.setTimeout(30000);
+let mysql = require('mysql')
 
+const connection = async () => new Promise(
+    (resolve, reject) => {
+        const connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            database: 'emrgingtrend'
+        });
+        connection.connect(error => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(connection);
+        })
+    }
+);
+const query = async (conn, q, params) => new Promise(
+    (resolve, reject) => {
+        const handler = (error, result) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(result);
+        }
+        conn.query(q, params, handler);
+    }
+);
+const testConnection = async (con, qu) => {
+    let result = await query(con, qu)
+    con.end()
+    return result
+}
 
-// testing case title
+(async () => {
+    await testConnection(await connection(), `delete from chat`)
+    await testConnection(await connection(), `delete from messages`)
+})()
+
+//testing case title
 test('Test login successfuly', async () => {
 
     // login with user and password to get a token
     let res = await axios.post('http://localhost:3000/api/login', {
-        username: 'ali',
+        username: 'seif',
         password: '123'
     }
-    )
-    expect(res.status).toBe(200)
-    // expect(res.data.msg).toBe("ok")
-})
-test('Test failed login', async () => {
+    ).catch(function (e) {
 
-    // login with user and password to get a token
-    let res = await axios.post('http://localhost:3000/api/login', {
-        username: 'ali',
-        password: '1234'
-    }
-    ).catch(function (e){
         expect(e.response.status).toBe(401)
     })
-    
-   // expect(res.status).toBe(403)
-
-    // expect(res.data.msg).toBe("ok")
+    expect(res.status).toBe(200)
 })
 
-
-// test('failed to login', async () => {
-
-//     // login with user and password to get a token
-//     let res = await axios.post('http://localhost:3000/api/login', {
-//         username: 'ali',
-//         password: '12345'
-//     }
-//     ).catch(function (error) {
-//         console.log(res.status)
-//         expect(error.response.status).toBe(401)
-
-//     })
-// })
-
-
-
-
-test('get chat list', async () => {
+test('failed to login', async () => {
 
     // login with user and password to get a token
     let res = await axios.post('http://localhost:3000/api/login', {
-        username: 'ali',
+        username: 'seif',
+        password: '12345'
+    }
+    ).catch(function (error) {
+        expect(error.response.status).toBe(401)
+
+    })
+})
+
+test('get friend list', async () => {
+    let res = await axios.post('http://localhost:3000/api/login', {
+        username: 'seif',
         password: '123'
     }
-    )
-    // expect(res.data.msg).toBe("ok")
+    ).catch(function (e) {
+        expect(e.response.status).toBe(401)
+    })
     let token = res.data
+    await testConnection(await connection(), `insert into chat values (1, '66666662', '66666663')`)
     let getdata = await axios.get("http://localhost:3000/api/v1.0/contacts",
         {
             headers: {
                 Authorization: `Bearer ${token}`
             }
+        }).catch(function (e) {
+            expect(e.response.status).toBe(403)
         })
-        console.log(getdata.status)
-    expect(res.status).toBe(200)
-
-
-})
-
-
-
-test('get chat', async () => {
-
-    // login with user and password to get a token
-    let res = await axios.post('http://localhost:3000/api/login', {
-        username: 'ali',
-        password: '123'
-    }
-    )
-    // expect(res.data.msg).toBe("ok")
-    let token = res.data
-    let getdata = await axios.post('http://localhost:3000/api/getConv', {
-        sender: "66666662",
-        receiver: "66666661",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
-    console.log(getdata.status)
-    expect(res.status).toBe(200)
-
-
+    let info = [getdata.data.contacts[0].name, getdata.data.contacts[0].phoneNum]
+    expect(info).toEqual(['ahmed', '66666663'])
 })
 
 test('send message', async () => {
 
     // login with user and password to get a token
     let res = await axios.post('http://localhost:3000/api/login', {
-        username: 'ali',
+        username: 'seif',
         password: '123'
-    }
-    )
-    // expect(res.data.msg).toBe("ok")
+    })
+
     let token = res.data
+    expect(res.status).toBe(200)
+
+
+    let messages = await testConnection(await connection(), `select * from messages`)
+    expect(messages.length).toBe(0)
+
     let getdata = await axios.post('http://localhost:3000/api/sendMessage', {
         sender: "66666662",
         message: "hello from tester",
-        receiver: "66666661",
+        receiver: "66666663",
         cid: "1",
         headers: {
             Authorization: `Bearer ${token}`
         }
     })
-    console.log(getdata.status)
-    expect(res.status).toBe(200)
 
-
+    // check the db if it got the message
+    messages = await testConnection(await connection(), `select * from messages`)
+    expect(messages.length).toBe(1)
+    expect(messages[0].message).toEqual('hello from tester')
+    expect(getdata.status).toBe(200)
 })
 
-///////////////////////////////////////////////////////////////////////
-// let getdata = await axios.get("http://localhost:3000/api/v1.0/contacts",
-// {
-//     headers: {
-//         Authorization: `Bearer ${res}`
-//     }
-// }).then((response) => {
-//     //console.log(response.data)
-//     let status = response.status
-//    // console.log(status)
+test('get chat', async () => {
+    let res = await axios.post('http://localhost:3000/api/login', {
+        username: 'seif',
+        password: '123'
+    }
+    ).catch(function (e) {
+        expect(e.response.status).toBe(401)
+    })
+    let token = res.data
 
-
-
-//     expect(status).toBe(200)
-//     done();
-
-// }).catch(function (error) {
-//      console.log(error)
-// });
-
-//     let getdata2 = await axios.post('/api/getConv', {
-
-//     }).then((response) => {
-//         //console.log(response.data)
-//         let status = response.status
-//         //console.log(status)
-
-//         expect(status).toBe(200)
-//         //done();
-
-//     }).catch(function (error) {
-//         // console.log(error)
-//     });
-
-//     let getdata3 = await axios.post('/api/sendMessage', {
-//     }).then((response) => {
-//         //console.log(response.data)
-//         let status = response.status
-//         console.log(getdata3)
-
-//         expect(status).toBe(200)
-//         //done();
-
-//     }).catch(function (error) {
-//         // console.log(error)
-//     });
-
-//     let getdata4 = await axios.put('/patients/:id/password',{
-//         username: 'saif',
-//         password: '123'
-//     }).then((response) => {
-//         //console.log(response.data)
-//         let status = response.status
-//         //console.log(status)
-
-//         expect(status).toBe(200)
-//         //done();
-
-//     }).catch(function (error) {
-//         //console.log(error)
-//     });
-
-// });
-///////////////////////////////////////////////////////////////////////
-    // // save the token
-    // let token = res.data
-    // // console.log(token)
-    // // test get the information in the main page
-    // res = await axios.get('http://localhost:3000/api/v1.0/contacts', {
-    //     // withCredentials: true,
-    //     headers: {
-    //         'Authorization': 'Bearer ' + token
-    //     },
-    // })
-    // res.setHeader('Access-Control-Allow-Credentials',true);
-    // if success, receive the data and do ........
-    // console.log(res.data)
-    //     } catch (e) {
-    //     // if got error like 401, print the status number
-    //     console.log('Error status is: ', e.status)
-    //     expect(res.status).toBe(401);
-    // }
-    // title('>> End Test ')
+    let getdata = await axios.post('http://localhost:3000/api/getConv', {
+        sender: "66666662",
+        receiver: "66666663",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    
+    // check the api if it reads the messages correctly
+    expect(getdata.data.userChat[0].message).toBe('hello from tester')
+})
 
