@@ -1,5 +1,4 @@
 let express = require("express")
-let crypto = require('crypto')
 let mysql = require('mysql')
 let app = express()
 let port = 3000
@@ -11,12 +10,14 @@ const jwt = require('jsonwebtoken')
 
 let appSecret = 'dsjkfnnkmdsbncjhbskjyfbckjsbjfdbgsjdbcjhsdgcjksdc'
 
+
+
 const connection = async () => new Promise(
     (resolve, reject) => {
         const connection = mysql.createConnection({
             host: 'localhost',
-            user: 'ahmed',
-            password: '12class34',
+            user: 'root',
+            password: '',
             database: 'etdb'
         });
         connection.connect(error => {
@@ -52,7 +53,6 @@ const userVerification = (authToken) => {
         return [200, user.type, user.num]
     }
     catch (e) {
-        // if invalid user or password 
         return [403]
     }
 }
@@ -75,7 +75,6 @@ app.get(basePath + '/contacts', async (req, res) => {
     let contacts = []
 
     // this use local
-    let a = null
     await Promise.all(
         userChat.map(async row => {
             if (row.user_one_num !== user[2]) {
@@ -98,21 +97,9 @@ app.get(basePath + '/contacts', async (req, res) => {
     else res.send('Invalid !!')
 })
 
-app.put(basePath + '/patients/:id/password', (req, res) => {
-    let item = userList.find(i => i.id + '' === req.params.id)
-    item.password = crypto.createHash('sha256').update('password').digest('base64')
-    res.send('updated the password')
-})
-
 app.post('/api/login', async (req, res) => {
-    // let pass = crypto.createHash('sha256').update(req.body.password).digest('base64')
     let co = await connection()
-    // let userChat = await  testConnection(co, `select * from chat where use = '` + user[2] + `' or user_two_num = '` + user[2] + `'`)
     let item = await testConnection(co, `select * from users where name = '${req.body.username}' and password = '${req.body.password}'`)
-    // let item = userList.find(i => i.name === req.body.username && i.password === req.body.password)
-
-    console.log(item)
-
 
     if (item.length !== 0) {
         item = item[0]
@@ -147,7 +134,7 @@ app.post('/api/getConv', async (req, res) => {
 
 app.post('/api/sendMessage', async (req, res) => {
     let co = await connection()
-    let q = await testConnection(co, `
+    await testConnection(co, `
         Insert Into messages(chat_id, sen, message,rec) values
         (
              ${req.body.cid},
@@ -158,11 +145,6 @@ app.post('/api/sendMessage', async (req, res) => {
     `)
     res.send('ok, all fine till now')
 })
-
-// app.post('/api/logout', (req, res) => {
-//     sessionStorage.clear()
-//     res.send('ok')
-// })
 
 app.listen(port, () => {
     console.log("The application has started")
