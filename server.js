@@ -99,24 +99,30 @@ app.get(basePath + '/contacts', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     let co = await connection()
-    let item = await testConnection(co, `select * from users where name = '${req.body.username}' and password = '${req.body.password}'`)
 
-    if (item.length !== 0) {
-        item = item[0]
-        let userData = {
-            name: req.body.username,
-            num: item.phoneNum,
-            type: item.role,
+    let item = await testConnection(co, `select * from users where name = '${req.body.username}'`)
+
+    let hash = item.length > 0 && item[0].password
+
+    bcrypt.compare(req.body.password, hash, async function (err, result) {
+        if (result) {
+            item = item[0]
+            let userData = {
+                name: req.body.username,
+                num: item.phoneNum,
+                type: item.role,
+            }
+            console.log(userData)
+            let token = jwt.sign(userData, appSecret)
+            res.send(token)
         }
-
-        let token = jwt.sign(userData, appSecret)
-        res.send(token)
-    }
-    else {
-        res.status(401)
-        res.send('User invalid')
-    }
+        else {
+            res.status(401)
+            res.send('User invalid')
+        }
+    })
 })
+
 
 app.post('/api/getConv', async (req, res) => {
 
