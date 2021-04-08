@@ -8,4 +8,4 @@ sudo npm install puppeteer --unsafe-perm=true
 sudo npm install jsonwebtoken
 sudo npm install express
 sudo npm install bcryptjs
-sudo pm2 start server.js
+sudo pm2 restart server.js
