@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo pm2 delete all
 sudo rm /opt/project/*
 sudo rm /var/www/project/*
 sudo cp server.js /opt/project
