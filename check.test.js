@@ -15,7 +15,7 @@ const connection = async () => new Promise(
             host: 'localhost',
             user: 'ahmed',
             password: '12class34',
-            database: 'apitest'
+            database: 'etdb'
         });
         connection.connect(error => {
             if (error) {
