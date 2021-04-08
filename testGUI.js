@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 
 async function test() {
-    let browser = await puppeteer.launch({ headless: false })
+    let browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
     let page = await browser.newPage()
 
     await page.goto("http://localhost:3000")
