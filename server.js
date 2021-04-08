@@ -1,6 +1,7 @@
 let express = require("express")
 let mysql = require('mysql')
 let app = express()
+var bcrypt = require('bcryptjs');
 let port = 3000
 
 let basePath = '/api/v1.0'
