@@ -1,7 +1,7 @@
 #!/bin/bash
-npm install
-npm install mysql
-npm install jsonwebtoken
-npm install express
-npm install bcryptjs
-pm2 start server.js
+sudo npm install
+sudo npm install mysql
+sudo npm install jsonwebtoken
+sudo npm install express
+sudo npm install bcryptjs
+sudo pm2 start server.js
