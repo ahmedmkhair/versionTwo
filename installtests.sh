@@ -1,7 +1,7 @@
 #!/bin/bash
-npm install
-npm i -g eslint
-npm install jest
-npm install mysql
-npm install axios
-npm install puppeteer --unsafe-perm=true
+sudo npm install
+sudo npm i -g eslint
+sudo npm install jest
+sudo npm install mysql
+sudo npm install axios
+sudo npm install puppeteer --unsafe-perm=true
